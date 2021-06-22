@@ -37,7 +37,7 @@ jobs:
           pushd $ARTIFACT_DIR
           find -type f \( -not -name "MD5SUMS.txt" \) -exec md5sum '{}' \; > MD5SUMS.txt
           cd ..
-          tar -czvf $PACKAGE_FILE $ARTIFACT_DIR/debug
+          tar -czvf $PACKAGE_FILE debug
           ls -la $PACKAGE_FILE
           md5sum $PACKAGE_FILE > ${PACKAGE_FILE}-MD5SUMS.txt
           ls -la ${PACKAGE_FILE}-MD5SUMS.txt
@@ -54,7 +54,7 @@ jobs:
           pushd $ARTIFACT_DIR
           find -type f \( -not -name "MD5SUMS.txt" \) -exec md5sum '{}' \; > MD5SUMS.txt
           cd ..
-          tar -czvf $PACKAGE_FILE $ARTIFACT_DIR/release
+          tar -czvf $PACKAGE_FILE release
           ls -la $PACKAGE_FILE
           md5sum $PACKAGE_FILE > ${PACKAGE_FILE}-MD5SUMS.txt
           ls -la ${PACKAGE_FILE}-MD5SUMS.txt
@@ -71,7 +71,7 @@ jobs:
           pushd $ARTIFACT_DIR
           find -type f \( -not -name "MD5SUMS.txt" \) -exec md5sum '{}' \; > MD5SUMS.txt
           cd ..
-          tar -czvf $PACKAGE_FILE $ARTIFACT_DIR/profile
+          tar -czvf $PACKAGE_FILE profile
           ls -la $PACKAGE_FILE
           md5sum $PACKAGE_FILE > ${PACKAGE_FILE}-MD5SUMS.txt
           ls -la ${PACKAGE_FILE}-MD5SUMS.txt
