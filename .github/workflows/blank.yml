@@ -32,8 +32,8 @@ jobs:
           make install -j
           make package
           cp *.deb $ARTIFACT_DIR/
-          ENGINE_VERSION=`cat engine.version | cut -c1-10`
-          PACKAGE_FILE="${OS}-${ARCH}-${ENGINE_VERSION}.debug.tar.gz"
+          export ENGINE_VERSION_DEBUG=`cat engine.version | cut -c1-10`
+          PACKAGE_FILE="${OS}-${ARCH}-${ENGINE_VERSION_DEBUG}.debug.tar.gz"
           pushd $ARTIFACT_DIR
           find -type f \( -not -name "MD5SUMS.txt" \) -exec md5sum '{}' \; > MD5SUMS.txt
           cd ..
@@ -49,8 +49,8 @@ jobs:
           make install -j
           make package
           cp *.deb $ARTIFACT_DIR/
-          ENGINE_VERSION=`cat engine.version | cut -c1-10`
-          PACKAGE_FILE="${OS}-${ARCH}-${ENGINE_VERSION}.release.tar.gz"
+          export ENGINE_VERSION_RELEASE=`cat engine.version | cut -c1-10`
+          PACKAGE_FILE="${OS}-${ARCH}-${ENGINE_VERSION_RELEASE}.release.tar.gz"
           pushd $ARTIFACT_DIR
           find -type f \( -not -name "MD5SUMS.txt" \) -exec md5sum '{}' \; > MD5SUMS.txt
           cd ..
@@ -66,8 +66,8 @@ jobs:
           make install -j
           make package
           cp *.deb $ARTIFACT_DIR/
-          ENGINE_VERSION=`cat engine.version | cut -c1-10`
-          PACKAGE_FILE="${OS}-${ARCH}-${ENGINE_VERSION}.profile.tar.gz"
+          export ENGINE_VERSION_PROFILE=`cat engine.version | cut -c1-10`
+          PACKAGE_FILE="${OS}-${ARCH}-${ENGINE_VERSION_PROFILE}.profile.tar.gz"
           pushd $ARTIFACT_DIR
           find -type f \( -not -name "MD5SUMS.txt" \) -exec md5sum '{}' \; > MD5SUMS.txt
           cd ..
@@ -81,7 +81,7 @@ jobs:
       - name: Runtime Debug artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: x86_64-linux-gcc debug
+          name: x86_64-linux-gcc.debug.${ENGINE_VERSION_DEBUG}
           path: |
             build/out/*.debug.tar.gz
             build/out/*.debug.tar.gz-MD5SUMS.txt
@@ -89,7 +89,7 @@ jobs:
       - name: Runtime Release artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: x86_64-linux-gcc release
+          name: x86_64-linux-gcc.release.${ENGINE_VERSION_RELEASE}
           path: |
             build/out/*.release.tar.gz
             build/out/*.release.tar.gz-MD5SUMS.txt
@@ -97,7 +97,7 @@ jobs:
       - name: Runtime Debug artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: x86_64-linux-gcc profile
+          name: x86_64-linux-gcc.profile.${ENGINE_VERSION_PROFILE}
           path: |
             build/out/*.profile.tar.gz
             build/out/*.profile.tar.gz-MD5SUMS.txt
