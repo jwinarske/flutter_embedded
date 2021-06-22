@@ -33,8 +33,42 @@ jobs:
           mkdir -p $ARTIFACT_DIR/debug/usr/local
           cmake .. -DTARGET_TRIPLE=x86_64-linux-gcc -DTARGET_ARCH=x64 -DCMAKE_STAGING_PREFIX=$ARTIFACT_DIR/debug/usr/local
           make install -j
+          make package
+          cp *.deb $ARTIFACT_DIR/
           ENGINE_VERSION=`cat engine.version | cut -c1-10`
           PACKAGE_FILE="desktop-x86_64-${ENGINE_VERSION}.beta.debug.tar.gz"
+          pushd $ARTIFACT_DIR
+          find -type f \( -not -name "MD5SUMS.txt" \) -exec md5sum '{}' \; > MD5SUMS.txt
+          cd ..
+          tar -czvf $PACKAGE_FILE $ARTIFACT_DIR
+          ls -la $PACKAGE_FILE
+          md5sum $PACKAGE_FILE > ${PACKAGE_FILE}-MD5SUMS.txt
+          ls -la ${PACKAGE_FILE}-MD5SUMS.txt
+          popd
+          rm -rf $ARTIFACT_DIR
+          mkdir -p $ARTIFACT_DIR/release/usr/local
+          cmake .. -DCHANNEL=beta -DENGINE_RUNTIME_MODE=release -DCMAKE_STAGING_PREFIX=$ARTIFACT_DIR/release/usr/local
+          make install -j
+          make package
+          cp *.deb $ARTIFACT_DIR/
+          ENGINE_VERSION=`cat engine.version | cut -c1-10`
+          PACKAGE_FILE="desktop-x86_64-${ENGINE_VERSION}.beta.release.tar.gz"
+          pushd $ARTIFACT_DIR
+          find -type f \( -not -name "MD5SUMS.txt" \) -exec md5sum '{}' \; > MD5SUMS.txt
+          cd ..
+          tar -czvf $PACKAGE_FILE $ARTIFACT_DIR
+          ls -la $PACKAGE_FILE
+          md5sum $PACKAGE_FILE > ${PACKAGE_FILE}-MD5SUMS.txt
+          ls -la ${PACKAGE_FILE}-MD5SUMS.txt
+          popd
+          rm -rf $ARTIFACT_DIR
+          mkdir -p $ARTIFACT_DIR/profile/usr/local
+          cmake .. -DCHANNEL=beta -DENGINE_RUNTIME_MODE=profile -DCMAKE_STAGING_PREFIX=$ARTIFACT_DIR/profile/usr/local
+          make install -j
+          make package
+          cp *.deb $ARTIFACT_DIR/
+          ENGINE_VERSION=`cat engine.version | cut -c1-10`
+          PACKAGE_FILE="desktop-x86_64-${ENGINE_VERSION}.beta.profile.tar.gz"
           pushd $ARTIFACT_DIR
           find -type f \( -not -name "MD5SUMS.txt" \) -exec md5sum '{}' \; > MD5SUMS.txt
           cd ..
