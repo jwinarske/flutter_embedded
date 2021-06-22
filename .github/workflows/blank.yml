@@ -38,7 +38,7 @@ jobs:
           pushd $ARTIFACT_DIR
           find -type f \( -not -name "MD5SUMS.txt" \) -exec md5sum '{}' \; > MD5SUMS.txt
           cd ..
-          tar -czvf $PACKAGE_FILE ./$CI_JOB_NAME
+          tar -czvf $PACKAGE_FILE $ARTIFACT_DIR
           ls -la $PACKAGE_FILE
           md5sum $PACKAGE_FILE > ${PACKAGE_FILE}-MD5SUMS.txt
           ls -la ${PACKAGE_FILE}-MD5SUMS.txt
