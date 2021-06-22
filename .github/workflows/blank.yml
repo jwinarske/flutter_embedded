@@ -13,68 +13,91 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  x86_64-linux-gcc:
     runs-on: [self-hosted, linux]
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-      - name: x86_64-linux-gcc
+      - name: Build Engine Variants
         run: |
-          CI_JOB_NAME="x86_64-linux-gcc"
-          ARTIFACT_DIR=`pwd`/out
           mkdir build && cd build
-          mkdir -p $ARTIFACT_DIR/debug/usr/local
-          cmake .. -DTARGET_TRIPLE=x86_64-linux-gcc -DTARGET_ARCH=x64 -DCMAKE_STAGING_PREFIX=$ARTIFACT_DIR/debug/usr/local
+          ARCH=x86_64
+          OS=linux
+          RUNTIME=gcc
+          ARTIFACT_DIR=`pwd`/out/debug
+          mkdir -p $ARTIFACT_DIR/usr/local
+          cmake .. -DTARGET_TRIPLE=${ARCH}-${OS}-${RUNTIME} -DTARGET_ARCH=x64 -DCMAKE_STAGING_PREFIX=$ARTIFACT_DIR/usr/local
           make install -j
           make package
           cp *.deb $ARTIFACT_DIR/
           ENGINE_VERSION=`cat engine.version | cut -c1-10`
-          PACKAGE_FILE="desktop-x86_64-${ENGINE_VERSION}.beta.debug.tar.gz"
+          PACKAGE_FILE="${OS}-${ARCH}-${ENGINE_VERSION}.debug.tar.gz"
           pushd $ARTIFACT_DIR
           find -type f \( -not -name "MD5SUMS.txt" \) -exec md5sum '{}' \; > MD5SUMS.txt
           cd ..
-          tar -czvf $PACKAGE_FILE $ARTIFACT_DIR
+          tar -czvf $PACKAGE_FILE $ARTIFACT_DIR/debug
           ls -la $PACKAGE_FILE
           md5sum $PACKAGE_FILE > ${PACKAGE_FILE}-MD5SUMS.txt
           ls -la ${PACKAGE_FILE}-MD5SUMS.txt
           popd
-          rm -rf $ARTIFACT_DIR
-          mkdir -p $ARTIFACT_DIR/release/usr/local
-          cmake .. -DCHANNEL=beta -DENGINE_RUNTIME_MODE=release -DCMAKE_STAGING_PREFIX=$ARTIFACT_DIR/release/usr/local
+          rm -rf $ARTIFACT_DIR/debug
+          ARTIFACT_DIR=`pwd`/out/release
+          mkdir -p $ARTIFACT_DIR/usr/local
+          cmake .. -DCHANNEL=beta -DENGINE_RUNTIME_MODE=release -DCMAKE_STAGING_PREFIX=$ARTIFACT_DIR/usr/local
           make install -j
           make package
           cp *.deb $ARTIFACT_DIR/
           ENGINE_VERSION=`cat engine.version | cut -c1-10`
-          PACKAGE_FILE="desktop-x86_64-${ENGINE_VERSION}.beta.release.tar.gz"
+          PACKAGE_FILE="${OS}-${ARCH}-${ENGINE_VERSION}.release.tar.gz"
           pushd $ARTIFACT_DIR
           find -type f \( -not -name "MD5SUMS.txt" \) -exec md5sum '{}' \; > MD5SUMS.txt
           cd ..
-          tar -czvf $PACKAGE_FILE $ARTIFACT_DIR
+          tar -czvf $PACKAGE_FILE $ARTIFACT_DIR/release
           ls -la $PACKAGE_FILE
           md5sum $PACKAGE_FILE > ${PACKAGE_FILE}-MD5SUMS.txt
           ls -la ${PACKAGE_FILE}-MD5SUMS.txt
           popd
-          rm -rf $ARTIFACT_DIR
-          mkdir -p $ARTIFACT_DIR/profile/usr/local
-          cmake .. -DCHANNEL=beta -DENGINE_RUNTIME_MODE=profile -DCMAKE_STAGING_PREFIX=$ARTIFACT_DIR/profile/usr/local
+          rm -rf $ARTIFACT_DIR/release
+          ARTIFACT_DIR=`pwd`/out/profile
+          mkdir -p $ARTIFACT_DIR/usr/local
+          cmake .. -DCHANNEL=beta -DENGINE_RUNTIME_MODE=profile -DCMAKE_STAGING_PREFIX=$ARTIFACT_DIR/usr/local
           make install -j
           make package
           cp *.deb $ARTIFACT_DIR/
           ENGINE_VERSION=`cat engine.version | cut -c1-10`
-          PACKAGE_FILE="desktop-x86_64-${ENGINE_VERSION}.beta.profile.tar.gz"
+          PACKAGE_FILE="${OS}-${ARCH}-${ENGINE_VERSION}.profile.tar.gz"
           pushd $ARTIFACT_DIR
           find -type f \( -not -name "MD5SUMS.txt" \) -exec md5sum '{}' \; > MD5SUMS.txt
           cd ..
-          tar -czvf $PACKAGE_FILE $ARTIFACT_DIR
+          tar -czvf $PACKAGE_FILE $ARTIFACT_DIR/profile
           ls -la $PACKAGE_FILE
           md5sum $PACKAGE_FILE > ${PACKAGE_FILE}-MD5SUMS.txt
           ls -la ${PACKAGE_FILE}-MD5SUMS.txt
           popd
-          rm -rf $ARTIFACT_DIR
+          rm -rf $ARTIFACT_DIR/profile
+          
+      - name: Runtime Debug artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: x86_64-linux-gcc debug
+          path: |
+            build/out/*.debug.tar.gz
+            build/out/*.debug.tar.gz-MD5SUMS.txt
+
+      - name: Runtime Release artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: x86_64-linux-gcc release
+          path: |
+            build/out/*.release.tar.gz
+            build/out/*.release.tar.gz-MD5SUMS.txt
+            
+      - name: Runtime Debug artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: x86_64-linux-gcc profile
+          path: |
+            build/out/*.profile.tar.gz
+            build/out/*.profile.tar.gz-MD5SUMS.txt
