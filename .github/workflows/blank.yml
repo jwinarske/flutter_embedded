@@ -76,7 +76,7 @@ jobs:
       - name: Runtime Debug artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: x86_64-linux-gcc.debug.${{ env.ENGINE_VERSION_DEBUG }}
+          name: x86_64-linux-gcc.debug
           path: |
             build/out/*.debug.tar.gz
             build/out/*.debug.tar.gz-MD5SUMS.txt
@@ -84,7 +84,7 @@ jobs:
       - name: Runtime Release artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: x86_64-linux-gcc.release.${{ env.ENGINE_VERSION_RELEASE }}
+          name: x86_64-linux-gcc.release
           path: |
             build/out/*.release.tar.gz
             build/out/*.release.tar.gz-MD5SUMS.txt
@@ -92,7 +92,7 @@ jobs:
       - name: Runtime Debug artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: x86_64-linux-gcc.profile.${{ env.ENGINE_VERSION_PROFILE }}
+          name: x86_64-linux-gcc.profile
           path: |
             build/out/*.profile.tar.gz
             build/out/*.profile.tar.gz-MD5SUMS.txt
