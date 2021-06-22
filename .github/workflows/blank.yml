@@ -1,16 +1,11 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI
 
-# Controls when the action will run. 
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
   push:
     branches: [ main, ci ]
   pull_request:
     branches: [ main, ci ]
 
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
@@ -77,11 +72,11 @@ jobs:
           ls -la ${PACKAGE_FILE}-MD5SUMS.txt
           popd
           rm -rf $ARTIFACT_DIR/profile
-          
+
       - name: Runtime Debug artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: x86_64-linux-gcc.debug.${ENGINE_VERSION_DEBUG}
+          name: x86_64-linux-gcc.debug.${{ env.ENGINE_VERSION_DEBUG }}
           path: |
             build/out/*.debug.tar.gz
             build/out/*.debug.tar.gz-MD5SUMS.txt
@@ -89,15 +84,15 @@ jobs:
       - name: Runtime Release artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: x86_64-linux-gcc.release.${ENGINE_VERSION_RELEASE}
+          name: x86_64-linux-gcc.release.${{ env.ENGINE_VERSION_RELEASE }}
           path: |
             build/out/*.release.tar.gz
             build/out/*.release.tar.gz-MD5SUMS.txt
-            
+
       - name: Runtime Debug artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: x86_64-linux-gcc.profile.${ENGINE_VERSION_PROFILE}
+          name: x86_64-linux-gcc.profile.${{ env.ENGINE_VERSION_PROFILE }}
           path: |
             build/out/*.profile.tar.gz
             build/out/*.profile.tar.gz-MD5SUMS.txt
